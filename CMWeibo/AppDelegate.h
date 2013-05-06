@@ -7,9 +7,20 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MainController.h"
 
+@class DDMenuController;
+@class SinaWeibo;
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
+{
+//    SinaWeibo *sinaweibo;
+}
 
 @property (strong, nonatomic) UIWindow *window;
+@property (nonatomic, retain) DDMenuController *menuCtrl;
+@property (nonatomic, retain) MainController *main;
+@property (nonatomic, retain) SinaWeibo *sinaweibo;
+
+- (void)_initSinaWeibo:(MainController *)main;
 
 @end

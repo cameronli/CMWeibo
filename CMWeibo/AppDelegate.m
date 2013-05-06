@@ -7,13 +7,33 @@
 //
 
 #import "AppDelegate.h"
+#import "SinaWeibo.h"
+#import "DDMenuController.h"
+#import "LeftViewController.h"
+#import "RightViewController.h"
 
 @implementation AppDelegate
 
 - (void)dealloc
 {
+    [_menuCtrl release];
+    [_main release];
     [_window release];
+    [_sinaweibo release];
     [super dealloc];
+}
+
+- (void)_initSinaWeibo:(MainController *)main
+{
+    _sinaweibo = [[SinaWeibo alloc] initWithAppKey:kAppKey appSecret:kAppSecret appRedirectURI:kAppRedirectURI andDelegate:main];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *sinaweiboInfo = [defaults objectForKey:@"SinaWeiboAuthData"];
+    if ([sinaweiboInfo objectForKey:@"AccessTokenKey"] && [sinaweiboInfo objectForKey:@"ExpirationDateKey"] && [sinaweiboInfo objectForKey:@"UserIDKey"])
+    {
+        _sinaweibo.accessToken = [sinaweiboInfo objectForKey:@"AccessTokenKey"];
+        _sinaweibo.expirationDate = [sinaweiboInfo objectForKey:@"ExpirationDateKey"];
+        _sinaweibo.userID = [sinaweiboInfo objectForKey:@"UserIDKey"];
+    }
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -22,6 +42,21 @@
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
+    
+    
+    _main = [[MainController alloc] init];
+    LeftViewController *leftCtrl = [[LeftViewController alloc] init];
+    RightViewController *rightCtrl = [[RightViewController alloc] init];
+    
+    _menuCtrl = [[DDMenuController alloc] initWithRootViewController:_main];
+    _menuCtrl.leftViewController = leftCtrl;
+    _menuCtrl.rightViewController = rightCtrl;
+    
+//    [self _initSinaWeibo];
+    
+    self.window.rootViewController = self.menuCtrl;
+    
+    
     return YES;
 }
 
@@ -51,5 +86,7 @@
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
+
 
 @end
