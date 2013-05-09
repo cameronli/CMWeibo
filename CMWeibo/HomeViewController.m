@@ -12,12 +12,18 @@
 #import "AppDelegate.h"
 #import "UserInfoViewController.h"
 #import "WeiboDetailViewController.h"
+#import "UploadWeiboViewController.h"
 
 
 
 static NSString *recevieDataType;
 
-@interface HomeViewController ()
+@interface HomeViewController (){
+    UIBarButtonItem *_logout;
+    UIBarButtonItem *_uploadWeibo;
+    UIBarButtonItem *_bind;
+}
+
 
 @end
 
@@ -53,14 +59,33 @@ static NSString *recevieDataType;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    //绑定账号按钮
-    UIBarButtonItem *bind = [[UIBarButtonItem alloc] initWithTitle:@"绑定账号" style:UIBarButtonItemStyleBordered target:self action:@selector(bindAction:)];
-    self.navigationItem.rightBarButtonItem = bind;
     
     //注销按钮
-    UIBarButtonItem *logout = [[UIBarButtonItem alloc] initWithTitle:@"注销" style:UIBarButtonItemStyleBordered target:self action:@selector(logoutAction:)];
-    self.navigationItem.leftBarButtonItem = logout;
+    _logout = [[UIBarButtonItem alloc] initWithTitle:@"注销" style:UIBarButtonItemStyleBordered target:self action:@selector(logoutAction:)];
     
+    UIButton *customBarButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    customBarButton.frame = CGRectMake(0, 0, [UIImage imageNamed:@"navigationbar_comment"].size.width, [UIImage imageNamed:@"navigationbar_comment"].size.height);
+    [customBarButton setImage:[UIImage imageNamed:@"navigationbar_comment"] forState:UIControlStateNormal];
+    [customBarButton addTarget:self action:@selector(uploadWeibo:) forControlEvents:UIControlEventTouchUpInside];
+    
+    _uploadWeibo = [[UIBarButtonItem alloc] initWithCustomView:customBarButton];
+    
+    
+    //绑定账号按钮
+    _bind = [[UIBarButtonItem alloc] initWithTitle:@"绑定账号" style:UIBarButtonItemStyleBordered target:self action:@selector(bindAction:)];
+    
+    [self setUIBarButtonItem];
+    
+}
+
+- (void)setUIBarButtonItem
+{
+    if ([self.sinaweibo isAuthValid]) {
+        self.navigationItem.leftBarButtonItem = _logout;
+        self.navigationItem.rightBarButtonItem = _uploadWeibo;
+    } else {
+        self.navigationItem.rightBarButtonItem = _bind;
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -138,6 +163,13 @@ static NSString *recevieDataType;
 - (void)logoutAction:(UIBarButtonItem *)button
 {
     [self.sinaweibo logOut];
+}
+
+- (void)uploadWeibo:(UIButton *)button
+{
+    UploadWeiboViewController *upload = [[UploadWeiboViewController alloc] init];
+//    upload.
+    [self presentViewController:upload animated:YES completion:nil];
 }
 
 #pragma mark - Memory Manager

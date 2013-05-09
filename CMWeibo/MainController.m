@@ -50,13 +50,13 @@
 
 -(void)_initViewController
 {
-    HomeViewController *home = [[HomeViewController alloc] init];
+    _home = [[HomeViewController alloc] init];
     MessageViewController *message = [[MessageViewController alloc] init];
     ProfileViewController *personal = [[ProfileViewController alloc] init];
     DiscoverViewController *square = [[DiscoverViewController alloc] init];
     MoreViewController *more = [[MoreViewController alloc] init];
     
-    NSArray *controllers = @[home, message, personal, square, more];
+    NSArray *controllers = @[_home, message, personal, square, more];
     NSMutableArray *navigations = [NSMutableArray arrayWithCapacity:5];
     for (UIViewController *controller in controllers) {
         BaseUINavigationController *navigation = [[BaseUINavigationController alloc] initWithRootViewController:controller];
@@ -165,12 +165,19 @@
                               sinaweibo.refreshToken, @"refresh_token", nil];
     [[NSUserDefaults standardUserDefaults] setObject:authData forKey:@"SinaWeiboAuthData"];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    [_home setUIBarButtonItem];
+    _home.weiboList = nil;
+    [_home loadWeiboData];
+    
 }
 
 - (void)sinaweiboDidLogOut:(SinaWeibo *)sinaweibo
 {
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"SinaWeiboAuthData"];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    [_home setUIBarButtonItem];
+    _home.weiboList = nil;
+    [_home loadWeiboData];
 }
 
 - (void)sinaweiboLogInDidCancel:(SinaWeibo *)sinaweibo

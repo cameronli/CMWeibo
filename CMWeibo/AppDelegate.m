@@ -45,7 +45,7 @@
     
     
     _main = [[MainController alloc] init];
-    LeftViewController *leftCtrl = [[LeftViewController alloc] init];
+    LeftViewController *leftCtrl = [[LeftViewController alloc] init];leftCtrl.view.frame = CGRectMake(0, 0, 50, 480);
     RightViewController *rightCtrl = [[RightViewController alloc] init];
     
     _menuCtrl = [[DDMenuController alloc] initWithRootViewController:_main];

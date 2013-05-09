@@ -9,17 +9,19 @@
 #import <UIKit/UIKit.h>
 #import "SinaWeibo.h"
 
+
 enum {
     CustomShowOrHideTabBarFromLeft = 0,
     CUstomShowOrHideTabBarFromBottom = 1
 };
 typedef NSUInteger CustomShowOrHideDirection;
 
-
+@class HomeViewController;
 @interface MainController : UITabBarController <SinaWeiboDelegate>
 {
     UIView *_tabBarView;
     UIView *_tabBarBGSelectedShadow;
+    HomeViewController *_home;
 }
 
 - (void)showTabBar:(CustomShowOrHideDirection)direction;

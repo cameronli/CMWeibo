@@ -17,6 +17,7 @@
 @property (nonatomic, retain)NSDictionary *userInfo;
 @property (nonatomic, retain)NSMutableArray *followList;
 @property (nonatomic, retain)NSString *followType;
+@property (nonatomic)int page;
 
 @property (retain, nonatomic) IBOutlet PullTableView *tableView;
 

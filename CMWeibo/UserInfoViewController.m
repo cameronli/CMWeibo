@@ -76,13 +76,13 @@ static NSString *recevieDataType;
 }
 
 - (IBAction)getFollowingUser:(id)sender {
-//    [self loadFollowingByUserId:[NSString stringWithFormat:@"%@",[self.userInfo objectForKey:@"id"]]];
     FollowUserViewController *followView = [[[FollowUserViewController alloc] initWithUserInfo:self.userInfo type:FOLLOWING_TYPE] autorelease];
     [self.navigationController pushViewController:followView animated:YES];
 }
 
 - (IBAction)getFollowerUser:(id)sender {
-    [self loadFollowerByUserId:[NSString stringWithFormat:@"%@",[self.userInfo objectForKey:@"id"]]];
+    FollowUserViewController *followView = [[[FollowUserViewController alloc] initWithUserInfo:self.userInfo type:FOLLOWER_TYPE] autorelease];
+    [self.navigationController pushViewController:followView animated:YES];
 }
 
 

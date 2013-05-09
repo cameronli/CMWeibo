@@ -14,8 +14,13 @@
 @interface HomeViewController : BaseUIViewController <SinaWeiboRequestDelegate, UITableViewDelegate, UITableViewDataSource, WeiboTableViewCellDelegate, PullTableViewDelegate>
 {
     IBOutlet PullTableView *weiboListTableView;
-    NSMutableArray *_weiboList;
     BOOL _reloading;
 }
+
+@property (nonatomic, retain)NSMutableArray *weiboList;
+
+
+- (void)loadWeiboData;
+- (void)setUIBarButtonItem;
 
 @end

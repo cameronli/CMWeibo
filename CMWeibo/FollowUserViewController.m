@@ -8,6 +8,8 @@
 
 #import "FollowUserViewController.h"
 #import "UIImageView+WebCache.h"
+#import "FollowUserTableCell.h"
+#import "UserInfoViewController.h"
 
 @interface FollowUserViewController ()
 
@@ -21,6 +23,13 @@
     if (self) {
         self.followType = type;
         self.userInfo = userInfo;
+        if ([type isEqual:FOLLOWER_TYPE]) {
+            self.title = @"粉丝列表";
+        }
+        if ([type isEqual:FOLLOWING_TYPE]) {
+            self.title = @"关注列表";
+        }
+        self.page = 0;
     }
     return self;
 }
@@ -31,12 +40,6 @@
     
     self.followList = [[NSMutableArray alloc] init];
     
-//    self.tableView = [[[PullTableView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height) style:UITableViewStylePlain] autorelease];
-//    self.tableView.dataSource = self;
-//    self.tableView.delegate = self;
-    
-//    [self.view addSubview:self.tableView];
-    
 	[self loadFollowDataByUserId:[NSString stringWithFormat:@"%@",[self.userInfo objectForKey:@"id"]]];
 }
 
@@ -46,6 +49,7 @@
 {
     NSMutableDictionary *param = [NSMutableDictionary dictionaryWithObject:id forKey:@"uid"];
     [param setObject:@"0" forKey:@"trim_status"];
+    [param setObject:[NSString stringWithFormat:@"%d",self.page] forKey:@"cursor"];
     if ([self.followType isEqual: FOLLOWER_TYPE]) {
         [self.sinaweibo requestWithURL:@"friendships/followers.json" params:param httpMethod:@"GET" delegate:self];
     }
@@ -66,13 +70,14 @@
 //网络加载完成
 - (void)request:(SinaWeiboRequest *)request didFinishLoadingWithResult:(id)result
 {
+    self.page += 50;
     NSDictionary *followUserDic = (NSDictionary *)[result retain];
     if (self.followList == nil) {
         self.followList = [[NSMutableArray alloc] init];
         [self.followList addObjectsFromArray:[followUserDic objectForKey:@"users"]];
         [self refreshTable];
     } else {
-        [self.followList removeLastObject];
+//        [self.followList removeLastObject];
         [self.followList addObjectsFromArray:[followUserDic objectForKey:@"users"]];
         [self loadMoreDataToTable];
     }
@@ -91,39 +96,44 @@
 {
     NSDictionary *userInfo = [self.followList objectAtIndex:indexPath.row];
     static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = (UITableViewCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    FollowUserTableCell *cell = (FollowUserTableCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
-//        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell = [[FollowUserTableCell alloc] initWithUserInfo:userInfo style:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    } else {
+        cell.userInfo = userInfo;
     }
-    [cell.imageView setImageWithURL:[userInfo objectForKey:@"profile_image_url"] placeholderImage:[UIImage imageNamed:@"placeholder"] options:SDWebImageRefreshCached];
-    cell.textLabel.text = [userInfo objectForKey:@"screen_name"];
-    cell.detailTextLabel.text = @"@@@";//[userInfo objectForKey:@"aaaa"];
     
     return cell;
 }
 
 #pragma mark -
 #pragma mark UITableViewDelegate
-//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    return [tableView cellForRowAtIndexPath:indexPath].frame.size.height;
-//}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UITableViewCell *cell = [self tableView:tableView cellForRowAtIndexPath:indexPath];
+    return cell.frame.size.height;
+}
 
-//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    
-//}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UserInfoViewController *userInfoViewController = [[[UserInfoViewController alloc] initWithUserInfo:[self.followList objectAtIndex:indexPath.row]] autorelease];
+    [self.navigationController pushViewController:userInfoViewController animated:YES];
+}
 
 #pragma mark - 
 #pragma mark PullTableViewDelegate
 - (void)pullTableViewDidTriggerRefresh:(PullTableView*)pullTableView
 {
-    
+    self.followList = nil;
+    self.page = 0;
+    [self loadFollowDataByUserId:[NSString stringWithFormat:@"%@",[self.userInfo objectForKey:@"id"]]];
 }
+
 - (void)pullTableViewDidTriggerLoadMore:(PullTableView*)pullTableView
 {
-    
+    [self loadFollowDataByUserId:[NSString stringWithFormat:@"%@",[self.userInfo objectForKey:@"id"]]];
 }
 
 #pragma mark - Refresh and load more methods
