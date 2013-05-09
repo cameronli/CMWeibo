@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @protocol SinaWeiboAuthorizeViewDelegate;
-
+ 
 @interface SinaWeiboAuthorizeView : UIView <UIWebViewDelegate>
 {
     UIWebView *webView;
