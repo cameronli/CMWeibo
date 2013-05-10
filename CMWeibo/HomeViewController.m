@@ -84,6 +84,7 @@ static NSString *recevieDataType;
         self.navigationItem.leftBarButtonItem = _logout;
         self.navigationItem.rightBarButtonItem = _uploadWeibo;
     } else {
+        self.navigationItem.leftBarButtonItem = nil;
         self.navigationItem.rightBarButtonItem = _bind;
     }
 }

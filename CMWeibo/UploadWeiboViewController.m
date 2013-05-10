@@ -7,10 +7,13 @@
 //
 
 #import "UploadWeiboViewController.h"
+#import "TSPopoverController.h"
 
 @interface UploadWeiboViewController ()
 
 @end
+
+static NSString *recevieDataType;
 
 @implementation UploadWeiboViewController
 
@@ -18,7 +21,7 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+        self.title = @"新微薄";
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
         
@@ -33,6 +36,28 @@
     return self;
 }
 
+- (id)initWithRetweetContent:(NSDictionary *)retweetContent
+{
+    self = [super init];
+    if (self) {
+        self.title = @"转发微博";
+        self.type = @"retweet";
+        self.retweetContent = retweetContent;
+    }
+    return self;
+}
+
+- (id)initWithCommentTweeter:(NSDictionary *)commentTweeter
+{
+    self = [super init];
+    if (self) {
+        self.title = @"评论微博";
+        self.type = @"comment";
+        self.retweetContent = commentTweeter;
+    }
+    return self;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -40,7 +65,26 @@
     [self.toolBar setBackgroundImage:[UIImage imageNamed:@"messages_toolbar_background"] forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
     
     [self setToolBarButton];
+    
+    self.activity = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];//指定进度轮的大小
+    [self.activity setCenter:CGPointMake(160, 140)];//指定进度轮中心点
+    [self.activity setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];//设置进度轮显示类型
+    [self.view addSubview:self.activity];
+    
+    [self loadUserData];
+    
+    if (self.retweetContent != nil && [self.type isEqualToString:@"retweet"]) {
+        NSDictionary *retweetUserInfo = [self.retweetContent objectForKey:@"user"];
+        NSString *sourceText = [self.retweetContent objectForKey:@"text"];
+        sourceText = [sourceText isEqualToString:@""]?@"转发微博":[NSString stringWithFormat:@"//@%@:%@",[retweetUserInfo objectForKey:@"screen_name"], sourceText];
+        self.weiboContentTextView.text = sourceText;
+    }
+    if ([self.type isEqualToString:@"comment"] && self.commentToUser != nil) {
+        self.weiboContentTextView.text = [NSString stringWithFormat:@"回复@%@:",self.commentToUser];
+    }
+    
     [self.weiboContentTextView becomeFirstResponder];
+    
 }
 
 
@@ -51,6 +95,9 @@
     [camera setImage:[UIImage imageNamed:@"messages_toolbar_camerabutton_background"] forState:UIControlStateNormal];
     [camera setImage:[UIImage imageNamed:@"messages_toolbar_camerabutton_background_highlighted"] forState:UIControlStateHighlighted];
     [camera addTarget:self action:@selector(openCamera:) forControlEvents:UIControlEventTouchUpInside];
+    if (self.retweetContent != nil) {
+        camera.userInteractionEnabled = NO;
+    }
     self.toolBarBtn1.customView = camera;
     
     UIButton *photo = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -58,12 +105,16 @@
     [photo setImage:[UIImage imageNamed:@"messages_toolbar_photobutton_background"] forState:UIControlStateNormal];
     [photo setImage:[UIImage imageNamed:@"messages_toolbar_photobutton_background_highlighted"] forState:UIControlStateHighlighted];
     [photo addTarget:self action:@selector(openMyPhoteLibary:) forControlEvents:UIControlEventTouchUpInside];
+    if (self.retweetContent != nil) {
+        photo.userInteractionEnabled = NO;
+    }
     self.toolBarBtn2.customView = photo;
     
     UIButton *connectSomeone = [UIButton buttonWithType:UIButtonTypeCustom];
     connectSomeone.frame = CGRectMake(0, 0, 22, 22);
     [connectSomeone setImage:[UIImage imageNamed:@"compose_mentionbutton_background"] forState:UIControlStateNormal];
     [connectSomeone setImage:[UIImage imageNamed:@"compose_mentionbutton_background_highlighted"] forState:UIControlStateHighlighted];
+    [connectSomeone addTarget:self action:@selector(friendsListShow: forEvent:) forControlEvents:UIControlEventTouchUpInside];
     self.toolBarBtn3.customView = connectSomeone;
     
     UIButton *faceImage = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -95,6 +146,7 @@
     [_toolBarBtn4 release];
     [_toolBarBtn5 release];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [_friendsTableView release];
     [super dealloc];
 }
 - (IBAction)cancelButtonClick:(id)sender {
@@ -102,6 +154,7 @@
 }
 
 - (IBAction)sendWeiboButtonClick:(UIBarButtonItem *)sender {
+    recevieDataType = RECEVIE_UPDATE_WEIBO_RESULT;
     [self.weiboContentTextView resignFirstResponder];
     NSString *weiboContent = self.weiboContentTextView.text;
     if ([[weiboContent stringByReplacingOccurrencesOfString:@" " withString:@""] isEqualToString:@""]) {
@@ -111,13 +164,46 @@
         return;
     }
     
+    if (self.retweetContent != nil) {
+        if ([self.type isEqualToString:@"retweet"]) {
+            NSString *retweeterId = nil;
+            if ([self.retweetContent objectForKey:@"retweeted_status"] != nil) {
+                NSDictionary *retweeted_status = [self.retweetContent objectForKey:@"retweeted_status"];
+                retweeterId = [NSString stringWithFormat:@"%@",[retweeted_status objectForKey:@"id"]];
+            } else {
+                retweeterId = [NSString stringWithFormat:@"%@",[self.retweetContent objectForKey:@"id"]];
+            }
+            NSMutableDictionary *param = [NSMutableDictionary dictionaryWithObjectsAndKeys:weiboContent, @"status", retweeterId, @"id", nil];
+            [self.activity startAnimating];
+            [self.sinaweibo requestWithURL:@"statuses/repost.json" params:param httpMethod:@"POST" delegate:self];
+            
+        }
+        if ([self.type isEqualToString:@"comment"]) {
+            NSMutableDictionary *param = [NSMutableDictionary dictionaryWithObjectsAndKeys:weiboContent, @"comment", [NSString stringWithFormat:@"%@",[self.retweetContent objectForKey:@"id"]], @"id", nil];
+            [self.sinaweibo requestWithURL:@"comments/create.json" params:param httpMethod:@"POST" delegate:self];
+        }
+        return;
+    }
+    
     NSMutableDictionary *param = [NSMutableDictionary dictionaryWithObject:weiboContent forKey:@"status"];
     if (self.pickerImage != nil) {
         [param setObject:self.pickerImage.image forKey:@"pic"];
         [self.sinaweibo requestWithURL:@"statuses/upload.json" params:param httpMethod:@"POST" delegate:self];
+        [self.activity startAnimating];
         return;
     }
+    [self.activity startAnimating];
     [self.sinaweibo requestWithURL:@"statuses/update.json" params:param httpMethod:@"POST" delegate:self];
+}
+
+#pragma mark -
+#pragma mark load data
+- (void)loadUserData
+{
+    recevieDataType = RECEVIE_USER_DATA;
+    NSMutableDictionary *param = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%@",self.sinaweibo.userID], @"uid", @"200", @"count", nil];
+    
+    [self.sinaweibo requestWithURL:@"friendships/friends.json" params:param httpMethod:@"GET" delegate:self];
 }
 
 #pragma mark - SinaWeiboRequestDelegate
@@ -125,15 +211,22 @@
 - (void)request:(SinaWeiboRequest *)request didFailWithError:(NSError *)error
 {
     NSLog(@"网络加载失败");
+    [self.activity stopAnimating];
 }
 
 //网络加载完成
 - (void)request:(SinaWeiboRequest *)request didFinishLoadingWithResult:(id)result
 {
     NSDictionary *res = (NSDictionary *)result;
-    
-    NSLog(@"%@",res);
-    [self dismissViewControllerAnimated:YES completion:nil];
+    if ([recevieDataType isEqualToString:RECEVIE_USER_DATA]) {
+        self.friendsList = [[NSMutableArray alloc] initWithArray:[res objectForKey:@"users"]];
+    }
+    if ([recevieDataType isEqualToString:RECEVIE_UPDATE_WEIBO_RESULT]) {
+        
+        NSLog(@"%@",res);
+        [self.activity stopAnimating];
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
 }
 
 #pragma mark -
@@ -167,9 +260,21 @@
     }
     
     pickerImage.delegate = self;
-    pickerImage.allowsEditing = NO;
+    pickerImage.allowsEditing = YES;
     [self presentViewController:pickerImage animated:YES completion:nil];
     [pickerImage release];
+}
+
+- (void)friendsListShow:(UIButton *)sender forEvent:(UIEvent*)event
+{
+    [self.weiboContentTextView resignFirstResponder];
+    TSPopoverController *userPopoverController = [[[TSPopoverController alloc] initWithView:self.friendsTableView] autorelease];
+    userPopoverController.cornerRadius = 5;
+    userPopoverController.titleText = @"关注列表";
+    userPopoverController.popoverBaseColor = [UIColor blackColor];
+    userPopoverController.popoverGradient= NO;
+    [userPopoverController showPopoverWithRect:CGRectMake(160, 430, 0, 0)];
+//    [userPopoverController showPopoverWithTouch:event];
 }
 
 #pragma mark -
@@ -234,9 +339,46 @@
     self.pickerImage.frame = CGRectMake(260, 430-64-2, 50, 50);
     [self.view addSubview:self.pickerImage];
     
-    NSLog(@"%@",info);
 }
 
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
+{
+    self.pickerImage = nil;
+    self.pickerImage = [[UIImageView alloc] initWithImage:image];
+    
+    self.pickerImage.frame = CGRectMake(260, 430-64-2, 50, 50);
+    [self.view addSubview:self.pickerImage];
+}
+
+#pragma mark -
+#pragma mark UITableViewDataSource
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return [self.friendsList count];
+}
+
+// Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:
+// Cell gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *cellIdentifier = @"cell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+    }
+    NSDictionary *userInfo = [self.friendsList objectAtIndex:indexPath.row];
+    cell.textLabel.text = [NSString stringWithFormat:@"%@%@",@"@",[userInfo objectForKey:@"screen_name"]];
+    return cell;
+}
+
+
+#pragma mark -
+#pragma mark UITableViewDelegate
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    self.weiboContentTextView.text = [NSString stringWithFormat:@"%@%@ ",self.weiboContentTextView.text,[tableView cellForRowAtIndexPath:indexPath].textLabel.text];
+}
 
 
 

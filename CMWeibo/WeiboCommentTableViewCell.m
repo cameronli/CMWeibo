@@ -98,6 +98,7 @@
     
     [self.revertButton setBackgroundImage:[UIImage imageNamed:@"comments_commentbutton_background"] forState:UIControlStateNormal];
     self.revertButton.frame = CGRectMake(320-34, 21, 34, 30);
+    [self.revertButton addTarget:self action:@selector(revertButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     
     
     [self.commentContent loadHTMLString:[WeiboHtmlString transformString:[self.weiboCommentContent objectForKey:@"text"]] baseURL:nil];
@@ -177,6 +178,14 @@
     return YES;
 }
 
+#pragma mark - 
+#pragma mark action
+- (void)revertButtonClick:(UIButton *)sender
+{
+    if ([_delegate respondsToSelector:@selector(revertClick:)]) {
+        [_delegate revertClick:self.userNickNameLabel.text];
+    }
+}
 
 #pragma mark - 
 #pragma mark memory control

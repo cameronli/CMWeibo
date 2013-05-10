@@ -10,6 +10,8 @@
 #import "UserInfoViewController.h"
 #import "ImageShowViewController.h"
 #import "AppDelegate.h"
+#import "TSActionSheet.h"
+#import "UploadWeiboViewController.h"
 
 @interface WeiboDetailViewController ()
 
@@ -39,6 +41,13 @@ static NSString *recevieDataType;
     
     [self.weiboCommentTableView setTableHeaderView:headView];
     [self loadWeiboCommentWithWeiboId:[NSString stringWithFormat:@"%@",[self.weiboContent objectForKey:@"id"]]];
+    
+//    UIButton *retweetButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+//    [retweetButton setTitle:@"转发" forState:UIControlStateNormal];
+//    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithCustomView:retweetButton];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(retweetAction:event:)];
+    //[[UIBarButtonItem alloc] initWithTitle:@"转发" style:UIBarButtonItemStyleBordered target:self action:@selector(retweetAction:)];
+    
 }
 
 #pragma mark - load data
@@ -97,6 +106,25 @@ static NSString *recevieDataType;
         }
         [self.weiboCommentTableView reloadData];
     }
+}
+
+#pragma mark -
+#pragma mark action
+- (void)retweetAction:(UIBarButtonItem *)sender event:(UIEvent *)event
+{
+    TSActionSheet *retweetSheet = [[TSActionSheet alloc] initWithTitle:@"操作"];
+     
+    [retweetSheet addButtonWithTitle:@"评论" block:^{
+        UploadWeiboViewController *commentView = [[[UploadWeiboViewController alloc] initWithRetweetContent:self.weiboContent] autorelease];
+        commentView.type = @"comment";
+        [self presentViewController:commentView animated:YES completion:nil];
+    }];
+    [retweetSheet addButtonWithTitle:@"转发" block:^{
+        UploadWeiboViewController *commentView = [[[UploadWeiboViewController alloc] initWithRetweetContent:self.weiboContent] autorelease];
+        commentView.type = @"retweet";
+        [self presentViewController:commentView animated:YES completion:nil];
+    }];
+    [retweetSheet showWithTouch:event];
 }
 
 #pragma mark -
@@ -164,6 +192,14 @@ static NSString *recevieDataType;
 - (void)openWebPageByUrl:(NSString *)url
 {
     NSLog(@"%@",url);
+}
+
+- (void)revertClick:(NSString *)revertUserName
+{
+    UploadWeiboViewController *commentView = [[[UploadWeiboViewController alloc] initWithRetweetContent:self.weiboContent] autorelease];
+    commentView.type = @"comment";
+    commentView.commentToUser = revertUserName;
+    [self presentViewController:commentView animated:YES completion:nil];
 }
 
 #pragma mark -

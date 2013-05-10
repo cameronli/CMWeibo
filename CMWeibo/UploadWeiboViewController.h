@@ -8,12 +8,18 @@
 
 #import "BaseUIViewController.h"
 
-@interface UploadWeiboViewController : BaseUIViewController<UITextFieldDelegate,UINavigationControllerDelegate, UIImagePickerControllerDelegate,SinaWeiboRequestDelegate>
+@interface UploadWeiboViewController : BaseUIViewController<UITextFieldDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, SinaWeiboRequestDelegate,UITableViewDataSource, UITableViewDelegate>
 
+@property (nonatomic, retain) NSDictionary *retweetContent;
+
+
+@property (retain, nonatomic) UIActivityIndicatorView *activity;
 @property (retain, nonatomic) IBOutlet UITextView *weiboContentTextView;
 @property (retain, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (retain, nonatomic) IBOutlet UIToolbar *toolBar;
 @property (retain, nonatomic) UIImageView *pickerImage;
+@property (retain, nonatomic) NSString *type;
+@property (retain, nonatomic) NSString *commentToUser;
 
 
 @property (retain, nonatomic) IBOutlet UIBarButtonItem *toolBarBtn1;
@@ -22,10 +28,15 @@
 @property (retain, nonatomic) IBOutlet UIBarButtonItem *toolBarBtn4;
 @property (retain, nonatomic) IBOutlet UIBarButtonItem *toolBarBtn5;
 
+@property (retain, nonatomic) NSMutableArray *friendsList;
 
+@property (retain, nonatomic) IBOutlet UITableView *friendsTableView;
 
 
 - (IBAction)cancelButtonClick:(id)sender;
 - (IBAction)sendWeiboButtonClick:(UIBarButtonItem *)sender;
+
+- (id)initWithRetweetContent:(NSDictionary *)retweetContent;
+- (id)initWithCommentTweeter:(NSDictionary *)commentTweeter;
 
 @end

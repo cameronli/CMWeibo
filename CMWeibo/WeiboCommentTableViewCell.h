@@ -15,6 +15,7 @@
 - (void)userInfoShow:(NSString *)userNickname;
 - (void)topicShowByTopicContent:(NSString *)topicName;
 - (void)openWebPageByUrl:(NSString *)url;
+- (void)revertClick:(NSString *)revertUserName;
 
 @end
 
