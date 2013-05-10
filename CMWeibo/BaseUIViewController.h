@@ -14,6 +14,7 @@
 #define RECEVIE_COMMENT_DATA @"commentData"
 #define RECEVIE_FOLLOWER_DATA @"followerData"
 #define RECEVIE_FOLLOWING_DATA @"followingData"
+#define RECEVIE_UPDATE_WEIBO_RESULT @"updateWeiboResult"
 
 @interface BaseUIViewController : UIViewController
 
