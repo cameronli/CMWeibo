@@ -30,6 +30,11 @@
 		7E39B38817068A4D002F8E26 /* timeline_membership_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E39B38417068A4D002F8E26 /* timeline_membership_icon.png */; };
 		7E39B38917068A4D002F8E26 /* timeline_membership_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E39B38517068A4D002F8E26 /* timeline_membership_icon@2x.png */; };
 		7E3B903F171BF58200AEB0FF /* ImageShowViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E3B903E171BF58200AEB0FF /* ImageShowViewController.m */; };
+		7E44789E173B5C8B00B40FBD /* TSActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E447894173B5C8B00B40FBD /* TSActionSheet.m */; };
+		7E44789F173B5C8B00B40FBD /* TSPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E447896173B5C8B00B40FBD /* TSPopoverController.m */; };
+		7E4478A0173B5C8B00B40FBD /* TSPopoverPopoverView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E447898173B5C8B00B40FBD /* TSPopoverPopoverView.m */; };
+		7E4478A1173B5C8B00B40FBD /* TSPopoverTouchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E44789B173B5C8B00B40FBD /* TSPopoverTouchView.m */; };
+		7E4478A2173B5C8B00B40FBD /* UIBarButtonItem+WEPopover.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E44789D173B5C8B00B40FBD /* UIBarButtonItem+WEPopover.m */; };
 		7E50FF4F1735033E007ACFA3 /* profile_cover_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E50FF4D1735033E007ACFA3 /* profile_cover_background.png */; };
 		7E50FF501735033E007ACFA3 /* profile_cover_background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E50FF4E1735033E007ACFA3 /* profile_cover_background@2x.png */; };
 		7E50FF5417351D15007ACFA3 /* WeiboDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E50FF5217351D15007ACFA3 /* WeiboDetailViewController.m */; };
@@ -357,6 +362,17 @@
 		7E39B38517068A4D002F8E26 /* timeline_membership_icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "timeline_membership_icon@2x.png"; sourceTree = "<group>"; };
 		7E3B903D171BF58200AEB0FF /* ImageShowViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageShowViewController.h; sourceTree = "<group>"; };
 		7E3B903E171BF58200AEB0FF /* ImageShowViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageShowViewController.m; sourceTree = "<group>"; };
+		7E447893173B5C8B00B40FBD /* TSActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSActionSheet.h; sourceTree = "<group>"; };
+		7E447894173B5C8B00B40FBD /* TSActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSActionSheet.m; sourceTree = "<group>"; };
+		7E447895173B5C8B00B40FBD /* TSPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPopoverController.h; sourceTree = "<group>"; };
+		7E447896173B5C8B00B40FBD /* TSPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPopoverController.m; sourceTree = "<group>"; };
+		7E447897173B5C8B00B40FBD /* TSPopoverPopoverView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPopoverPopoverView.h; sourceTree = "<group>"; };
+		7E447898173B5C8B00B40FBD /* TSPopoverPopoverView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPopoverPopoverView.m; sourceTree = "<group>"; };
+		7E447899173B5C8B00B40FBD /* TSPopoverTouchesDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPopoverTouchesDelegate.h; sourceTree = "<group>"; };
+		7E44789A173B5C8B00B40FBD /* TSPopoverTouchView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TSPopoverTouchView.h; sourceTree = "<group>"; };
+		7E44789B173B5C8B00B40FBD /* TSPopoverTouchView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TSPopoverTouchView.m; sourceTree = "<group>"; };
+		7E44789C173B5C8B00B40FBD /* UIBarButtonItem+WEPopover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+WEPopover.h"; sourceTree = "<group>"; };
+		7E44789D173B5C8B00B40FBD /* UIBarButtonItem+WEPopover.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+WEPopover.m"; sourceTree = "<group>"; };
 		7E50FF4D1735033E007ACFA3 /* profile_cover_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = profile_cover_background.png; sourceTree = "<group>"; };
 		7E50FF4E1735033E007ACFA3 /* profile_cover_background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "profile_cover_background@2x.png"; sourceTree = "<group>"; };
 		7E50FF5117351D15007ACFA3 /* WeiboDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeiboDetailViewController.h; sourceTree = "<group>"; };
@@ -769,6 +785,24 @@
 			name = BaseView;
 			sourceTree = "<group>";
 		};
+		7E447892173B5C8A00B40FBD /* TSPopover */ = {
+			isa = PBXGroup;
+			children = (
+				7E447893173B5C8B00B40FBD /* TSActionSheet.h */,
+				7E447894173B5C8B00B40FBD /* TSActionSheet.m */,
+				7E447895173B5C8B00B40FBD /* TSPopoverController.h */,
+				7E447896173B5C8B00B40FBD /* TSPopoverController.m */,
+				7E447897173B5C8B00B40FBD /* TSPopoverPopoverView.h */,
+				7E447898173B5C8B00B40FBD /* TSPopoverPopoverView.m */,
+				7E447899173B5C8B00B40FBD /* TSPopoverTouchesDelegate.h */,
+				7E44789A173B5C8B00B40FBD /* TSPopoverTouchView.h */,
+				7E44789B173B5C8B00B40FBD /* TSPopoverTouchView.m */,
+				7E44789C173B5C8B00B40FBD /* UIBarButtonItem+WEPopover.h */,
+				7E44789D173B5C8B00B40FBD /* UIBarButtonItem+WEPopover.m */,
+			);
+			path = TSPopover;
+			sourceTree = "<group>";
+		};
 		7E5D6A251702F84000A68A46 /* FancyLabel */ = {
 			isa = PBXGroup;
 			children = (
@@ -1133,6 +1167,7 @@
 		7EC316F716FB286F0077AC52 /* OpenSource */ = {
 			isa = PBXGroup;
 			children = (
+				7E447892173B5C8A00B40FBD /* TSPopover */,
 				7E158E7C173117DF000E753E /* EGOTableViewPullRefresh */,
 				7E5D6A251702F84000A68A46 /* FancyLabel */,
 				7E5D6A281702F84000A68A46 /* RegexKitLite */,
@@ -1667,6 +1702,11 @@
 				7E1CA4ED1736062600995D8A /* FollowUserViewController.m in Sources */,
 				7E7B182F1738E3B200560A6D /* FollowUserTableCell.m in Sources */,
 				7EBDA693173A001D005AA52F /* UploadWeiboViewController.m in Sources */,
+				7E44789E173B5C8B00B40FBD /* TSActionSheet.m in Sources */,
+				7E44789F173B5C8B00B40FBD /* TSPopoverController.m in Sources */,
+				7E4478A0173B5C8B00B40FBD /* TSPopoverPopoverView.m in Sources */,
+				7E4478A1173B5C8B00B40FBD /* TSPopoverTouchView.m in Sources */,
+				7E4478A2173B5C8B00B40FBD /* UIBarButtonItem+WEPopover.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
