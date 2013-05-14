@@ -279,8 +279,6 @@
             continue;
         }
         
-        NSLog(@"%@",[params objectForKey:key]);
-        NSLog(@"%@",[[params objectForKey:key] class]);
         
         NSString* escaped_value = (NSString *)CFURLCreateStringByAddingPercentEscapes(
                                                                                       NULL, /* allocator */

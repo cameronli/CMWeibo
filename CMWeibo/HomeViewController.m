@@ -35,13 +35,7 @@ static NSString *recevieDataType;
     if (self) {
         self.title = @"首页";
         self.view.backgroundColor = [UIColor redColor];
-        //判断是否认证
-        if (self.sinaweibo.isAuthValid) {
-            //加载微博列表数据
-            [self loadWeiboData];
-        } else {
-            [self.sinaweibo logIn];
-        }
+        
     }
     return self;
 }
@@ -75,6 +69,15 @@ static NSString *recevieDataType;
     _bind = [[UIBarButtonItem alloc] initWithTitle:@"绑定账号" style:UIBarButtonItemStyleBordered target:self action:@selector(bindAction:)];
     
     [self setUIBarButtonItem];
+    
+    //判断是否认证
+    if (self.sinaweibo.isAuthValid) {
+        //加载微博列表数据
+        [self loadWeiboData];
+    } else {
+        [self.sinaweibo logIn];
+//        [self bindAction:nil];
+    }
     
 }
 
